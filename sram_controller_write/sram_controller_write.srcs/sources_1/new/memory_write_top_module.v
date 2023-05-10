@@ -71,16 +71,18 @@ module memory_write_top_module #(
     endtask
 
     function is_time_expired;
+        input [7:0] counter;
         input [7:0] time_to_wait;
         begin
-            if((counter * STEP_SIZE_IN_NS) >= (time_to_wait - STEP_SIZE_IN_NS)) begin
+           /* if((counter * STEP_SIZE_IN_NS) >= (time_to_wait - STEP_SIZE_IN_NS)) begin
                 counter = 0;
                 is_time_expired = 1;
             end
             else begin
                 is_time_expired = 0;
                 counter = counter + 1;
-            end
+            end*/
+            is_time_expired = 1; // TODO
         end
     endfunction
 
@@ -118,26 +120,26 @@ module memory_write_top_module #(
 
             SET_ADDRESS: begin
             alines <= alines + 1; // TODO start with -1;
-            if(is_time_expired(0))
+            if(is_time_expired(counter, 0))
             inc_state();
 
             end
 
             ACTIVATE_CE: begin
             ce <= 0;
-            if(is_time_expired(0))
+            if(is_time_expired(counter,0))
             inc_state();
             end
 
             ACTIVATE_WE: begin
             we <= 0;
-            if(is_time_expired(teleh))
+            if(is_time_expired(counter, teleh))
             inc_state();
             end
 
             SET_DATA: begin
             dlines <= value;
-            if(is_time_expired(0))
+            if(is_time_expired(counter, 0))
             inc_state();
             end
 
@@ -148,7 +150,7 @@ module memory_write_top_module #(
             ready <= 1;
             active <= 0;
             written <= 1;
-            if(is_time_expired(0))
+            if(is_time_expired(counter, 0))
             inc_state();
             end
         endcase
