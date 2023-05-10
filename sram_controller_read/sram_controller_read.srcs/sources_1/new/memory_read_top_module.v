@@ -22,7 +22,9 @@
 	  //% Frequency of the clock driving the memory controller. (used for synchronization purposes)
 	  parameter FREQ_CLK2=400,
 	  //% Data setup time defines how much time is waited until a read operation is executed.
-	  parameter DATA_SETUP_TIME=70
+	  parameter integer ADDRESS_BUS_SIZE=32,
+      parameter integer DATA_BUS_SIZE=16,
+      parameter integer CLOCK_CONFIG_WIDTH=16
 	  )(
 	
 	//% Input clock which drives the memory controller.
@@ -30,16 +32,20 @@
 	
 	input wire start,
 	
+	input wire reset,
+	
 	//% The value which should be read from the // TODO.
-	output  wire[15:0] value, 
+	output  wire[DATA_BUS_SIZE-1:0] value, 
 	
 	//% Data lines from which the data should be read
-	input wire[15:0] dlines,
+	input wire[DATA_BUS_SIZE-1:0] dlines,
 	
-	input wire[31:0] address,
+	input wire[ADDRESS_BUS_SIZE-1:0] address,
+	
+	input wire[CLOCK_CONFIG_WIDTH-1:0] teleh, 
 	
 	//% Address lines specifying the address currently used. (only the Rohm FRAM is supported with a address width of 15 bit)
-	output wire[31:0] alines,
+	output wire[ADDRESS_BUS_SIZE-1:0] alines,
 	
 	//% Chip enable signal.
 	output wire ce,
@@ -55,9 +61,6 @@
 	
 	//% Synchronization signal to indicate if the management should wait or should start working.
 	output reg[1:0] sync_out,
-	
-	//% Debuging pin showing the current state of the module.
-	output wire[2:0] state_pin,
 	
 	output wire active,
 	
@@ -184,20 +187,18 @@
 	 
 	 	// Reading module of the micro controller
    read_sram_protocol #(
-		.CLK_FREQUENCY(FREQ_CLK2), 
-		.tELEH(DATA_SETUP_TIME)) 
+		.CLK_FREQUENCY(FREQ_CLK2)) 
 	memorycontroller_read (
 		.clk(clk), 
+		.teleh(teleh),
 		.signal_start(signal_start), 
 		.ce(ce), 
 		.oe(oe), 
 		.signal_done(signal_done),
 		.value(value),
-		.dlines(dlines),
-		.debug_state());
+		.dlines(dlines));
 	
 	assign alines = alines_reg;
-	assign state_pin = state; // TODO
 
 endmodule
 //% @}
