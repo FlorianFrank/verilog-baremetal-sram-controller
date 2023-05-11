@@ -22,8 +22,6 @@ module read_sram_protocol #(
     input wire reset,
 
     input wire start,
-    //% send one pulse (1 clock cycle of clk) to start the reading process
-    input wire signal_start,
 
     output reg[DATA_BUS_SIZE-1:0] value,
 
@@ -41,14 +39,13 @@ module read_sram_protocol #(
     output reg active,
 
     output reg ready
-
 );
 
 
     //% This parameter stores the time to wait between when reading from the memory (OE phase)
     //% e.g. tELEH (70ns) * 10 / ((10000/CLK_FREQUENCY))/ 2 (reaction only to the low -> high transision of the clock) = 14  
     //% So a counter needs to count up to 14 with a frequency of 400 MHz to satisfy the 70 ns OE phase
-    integer WAIT_TIME = 0; 
+    integer WAIT_TIME = 0;
 
     //% This variable stores the timing counter to match the tELEH timing behavior.
     integer timing_ctr = 0;
@@ -56,9 +53,17 @@ module read_sram_protocol #(
     //% This register specifies the current state of the state machine.
     reg [2:0]state = `STATE_IDLE;
 
+
+
     initial begin
         state <= `STATE_IDLE;
         timing_ctr <= WAIT_TIME;
+
+        active <= 1;
+        signal_done <= 0;
+        oe <= 1;
+        ce <= 1;
+        value <= 16'h5522;
     end
 
 
@@ -70,18 +75,17 @@ module read_sram_protocol #(
             // Wait for incomming read request
             `STATE_IDLE:
             begin
-                WAIT_TIME <= teleh*10/((10000/CLK_FREQUENCY));
-                if(start == 1) begin
-                    active <= 1;
-                    signal_done <= 0;
-                    oe <= 1;
-                    ce <= 1;
-                    if (signal_start == 1)
+                signal_done <= 0;
+                oe <= 1;
+                ce <= 1;
+                if (start == 1)
                     begin
+                        timing_ctr <= teleh*10/((10000/CLK_FREQUENCY)); 
+                        active <= 1;
                         signal_done <= 0;
                         state <= `STATE_SET_CE;
                     end
-                end else active <= 0;
+                else active <= 0;
                 ready <= 0;
             end
 
@@ -128,7 +132,7 @@ module read_sram_protocol #(
                 ce <= 1;
                 active <= 0;
                 ready <= 1;
-                if(finished_ctr < 4) begin
+                if(finished_ctr < 4) begin // TODO adjust
                     signal_done <= 1;
                     finished_ctr <= finished_ctr + 1;
                 end
@@ -140,6 +144,6 @@ module read_sram_protocol #(
             end
         endcase
     end
-
+    
 endmodule
 //% @}
