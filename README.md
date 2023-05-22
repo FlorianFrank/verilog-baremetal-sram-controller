@@ -67,6 +67,51 @@ The following figure shows the simulation of the reading module with two subsequ
 
 ## 3. Writing IP core
 
-The reading IP core can be added to your block design by adding **sram_controller_write** to your IP-cores repository. 
+The wriging IP core can be added to your block design by adding **sram_controller_write** to your IP-cores repository. 
 
-![reading ip core](documentation/figures/sram_read_controller_ip_core.png)
+![reading ip core](documentation/figures/sram_write_controller_ip_core.png)
+
+### 3.1 The IP-core has following parameters:
+
+|Parameter|Description|
+|----|-----|
+|Freq Clk1|Frequency of the clock on which the block diagram is running in which this IP-core is embedded. This parameter is required to synchronize the response between the components running on Clk1 and the higher clock frequency provided to this IP-core by Clk2|
+|Freq Clk2|Dedicated clock, e.g. provided by the clocking module, to achieve higher clock frequencies and more precise timing when accessing the memory.|
+|Data Bus Size | Size of the data bus must match the specifications of the memory module. Adjusts the size of dlines and value.|
+|Address Bus Size | Size of the address bus must match the specifications of the memory module. Adjusts the size of alines and address.|
+|Clock Config Size | Adjusts the width of the teleh parameter. This parameter is further explained in 2.2.|
+
+
+
+### 3.2 The IP-core has following input wires:
+
+|Signal|Description|
+|----|-----|
+|clk| Input clock with clock frequency specified by Freq Clk2. |
+|start| When set to high for at least one clock cycle of Clk2. The module starts reading |
+|reset| Resets all wires. The state-machine changes back to the INIT state.|
+|value[DATA_WIDTH-1: 0]| Sets the value to write to a specific address. Adjustable by the parameter **Data Width.** |
+|address[ADDRESS_WIDTH-1:0]| Selected address to write to. Adjustable by the parameter **Address Bus Size.** |
+|teleh[CLOCK_CONFIG_SIZE-1:0]| Adjustment of the timing data setup time, like shown in Figure 1. Adjustable by the parameter **Clock Config Width.** |
+
+
+### 3.3 The IP-core has following output wires:
+
+|Signal|Description|
+|----|-----|
+|value[DATA_WIDTH-1: 0]| Output value provided to a connected module read from dlines. Can also be ajusted by the **Data Width** parameter. |
+|alines[ADDRESS_WIDTH-1: 0]| Address provided to the GPIO pins of the FPGA. Can be adjusted by the **Address Bus Size** parameter.  |
+|ce| Chip Enable signal forwarded to the GPIO pins.|
+|we| Write Enable signal forwarded to the GPIO pins.|
+|we| Write Enable signal forwarded to the GPIO pins.|
+|active| Indicates if the internal state machine of the module is in IDLE mode or running. |
+|ready| Indicates when a value from the value output wire is written.|
+
+
+### 2.4 Sample block diagram:
+
+The block diagram can be constructed simultanously to the one of the read controller.
+
+The following figure shows a simulation of two write operations.
+
+![reading ip core](documentation/figures/write_simulation.png)
