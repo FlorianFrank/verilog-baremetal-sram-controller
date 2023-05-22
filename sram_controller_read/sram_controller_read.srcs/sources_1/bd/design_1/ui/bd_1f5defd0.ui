@@ -1,0 +1,27 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"2.63902",
+   "Default View_TopLeft":"-303,-189",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.0r4  2019-12-20 bk=1.5203 VDI=41 GEI=36 GUI=JA:10.0 TLS
+#  -string -flagsOSRD
+preplace port port-id_clk_100MHZ -pg 1 -lvl 0 -x 0 -y 20 -defaultsOSRD
+preplace port port-id_ce_0 -pg 1 -lvl 3 -x 560 -y 100 -defaultsOSRD
+preplace port port-id_oe_0 -pg 1 -lvl 3 -x 560 -y 120 -defaultsOSRD
+preplace port port-id_we_0 -pg 1 -lvl 3 -x 560 -y 140 -defaultsOSRD
+preplace portBus alines_0 -pg 1 -lvl 3 -x 560 -y 80 -defaultsOSRD
+preplace portBus dlines_0 -pg 1 -lvl 0 -x 0 -y 220 -defaultsOSRD
+preplace inst custom_clock_module_0 -pg 1 -lvl 1 -x 150 -y 120 -defaultsOSRD
+preplace inst memory_read_top_modu_0 -pg 1 -lvl 2 -x 410 -y 120 -defaultsOSRD
+preplace netloc clk_100MHZ_1 1 0 2 20 20 280J
+preplace netloc custom_clock_module_0_clk_out1 1 1 1 NJ 80
+preplace netloc dlines_0_1 1 0 2 NJ 220 280J
+preplace netloc memory_read_top_modu_0_alines 1 2 1 NJ 80
+preplace netloc memory_read_top_modu_0_ce 1 2 1 NJ 100
+preplace netloc memory_read_top_modu_0_oe 1 2 1 NJ 120
+preplace netloc memory_read_top_modu_0_we 1 2 1 NJ 140
+levelinfo -pg 1 0 150 410 560
+pagesize -pg 1 -db -bbox -sgen -160 0 720 240
+"
+}
+0

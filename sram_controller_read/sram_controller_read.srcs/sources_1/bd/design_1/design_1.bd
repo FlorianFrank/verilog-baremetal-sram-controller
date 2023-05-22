@@ -1,0 +1,106 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x0",
+      "device": "xc7z020clg400-1",
+      "gen_directory": "../../../../sram_controller_read.gen/sources_1/bd/design_1",
+      "name": "design_1",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2022.1"
+    },
+    "design_tree": {
+      "custom_clock_module_0": "",
+      "memory_read_top_modu_0": ""
+    },
+    "ports": {
+      "clk_100MHZ": {
+        "type": "clk",
+        "direction": "I"
+      },
+      "alines_0": {
+        "direction": "O",
+        "left": "31",
+        "right": "0"
+      },
+      "ce_0": {
+        "direction": "O"
+      },
+      "oe_0": {
+        "direction": "O"
+      },
+      "we_0": {
+        "direction": "O"
+      },
+      "dlines_0": {
+        "direction": "I",
+        "left": "15",
+        "right": "0"
+      }
+    },
+    "components": {
+      "custom_clock_module_0": {
+        "vlnv": "seceng.fim.uni-passau.de:custom_clock_module:custom_clock_module:1.0",
+        "xci_name": "design_1_custom_clock_module_0_0",
+        "xci_path": "ip/design_1_custom_clock_module_0_0/design_1_custom_clock_module_0_0.xci",
+        "inst_hier_path": "custom_clock_module_0"
+      },
+      "memory_read_top_modu_0": {
+        "vlnv": "seceng.fim.uni-passau.de:seceng.fim.uni-passau.de:memory_read_top_module:1.0",
+        "xci_name": "design_1_memory_read_top_modu_0_0",
+        "xci_path": "ip/design_1_memory_read_top_modu_0_0/design_1_memory_read_top_modu_0_0.xci",
+        "inst_hier_path": "memory_read_top_modu_0"
+      }
+    },
+    "nets": {
+      "clk_100MHZ_1": {
+        "ports": [
+          "clk_100MHZ",
+          "custom_clock_module_0/clk_in",
+          "memory_read_top_modu_0/clk1"
+        ]
+      },
+      "custom_clock_module_0_clk_out1": {
+        "ports": [
+          "custom_clock_module_0/clk_out1"
+        ]
+      },
+      "custom_clock_module_0_clk_out1_inv": {
+        "ports": [
+          "custom_clock_module_0/clk_out1_inv",
+          "memory_read_top_modu_0/clk2"
+        ]
+      },
+      "dlines_0_1": {
+        "ports": [
+          "dlines_0",
+          "memory_read_top_modu_0/dlines"
+        ]
+      },
+      "memory_read_top_modu_0_alines": {
+        "ports": [
+          "memory_read_top_modu_0/alines",
+          "alines_0"
+        ]
+      },
+      "memory_read_top_modu_0_ce": {
+        "ports": [
+          "memory_read_top_modu_0/ce",
+          "ce_0"
+        ]
+      },
+      "memory_read_top_modu_0_oe": {
+        "ports": [
+          "memory_read_top_modu_0/oe",
+          "oe_0"
+        ]
+      },
+      "memory_read_top_modu_0_we": {
+        "ports": [
+          "memory_read_top_modu_0/we",
+          "we_0"
+        ]
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -29,10 +30,11 @@ module tb_memory_controller_read(
 
 
 
-    reg clk = 0;
+    reg clk1 = 0;
+    reg clk2 = 0;
     reg start = 0;
     reg reset = 0;
-    reg [`CLOCK_CONFIG_WIDTH-1:0] teleh = `CLOCK_CONFIG_WIDTH'd10;
+    reg [`CLOCK_CONFIG_WIDTH-1:0] teleh = `CLOCK_CONFIG_WIDTH'd4;
     reg[`ADDRESS_BUS_SIZE-1:0] address = `ADDRESS_BUS_SIZE'h55aa55aa55;
     wire active;
     wire ready;
@@ -48,17 +50,35 @@ module tb_memory_controller_read(
         start <= 1;
         #8
         start <= 0;
-        #100
+        #200
+        address <= `DATA_BUS_SIZE'haa55;
+        start <= 1;
+        #8
+        start <= 0;
+        #7
+        #800
         $stop;
     end
 
     initial begin
-        forever #2 clk = ~clk;
+        forever #2 clk1 = ~clk1;
     end
 
-
+    initial begin
+        forever #8 clk2 = ~clk2;
+    end    
+       
+    
+    
     memory_read_top_module  #(
-    .INPUT_FREQUENCY(400)) memory_module_writer(.clk(clk), .start(start), .reset(reset), .value(value), .dlines(dlines), .address(address), .teleh(teleh),
+        .FREQ_CLK1(100),
+        .FREQ_CLK2(400),
+        .ADDRESS_BUS_SIZE(32),
+        .DATA_BUS_SIZE(16),
+        .CLOCK_CONFIG_WIDTH(16),
+        .READ_START_DELAY(5),
+        .IDLE_DELAY(0)
+    ) memory_module_writer(.clk1(clk1), .clk2(clk2), .start(start), .reset(reset), .value(value), .dlines(dlines), .address(address), .teleh(teleh),
         .alines(alines), .ce(ce), .oe(oe), .we(we), .active(active), .ready(ready));
 
 endmodule

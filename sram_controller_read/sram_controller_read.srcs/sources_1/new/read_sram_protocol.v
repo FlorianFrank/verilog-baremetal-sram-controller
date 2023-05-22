@@ -14,7 +14,8 @@ module read_sram_protocol #(
     parameter CLK_FREQUENCY=400,
     parameter integer ADDRESS_BUS_SIZE=32,
     parameter integer DATA_BUS_SIZE=16,
-    parameter integer CLOCK_CONFIG_WIDTH=16
+    parameter integer CLOCK_CONFIG_WIDTH=16,
+    parameter integer IDLE_TIME=2
 )(
     //% Input clock which drives this module.
     input wire clk,
@@ -63,7 +64,7 @@ module read_sram_protocol #(
         signal_done <= 0;
         oe <= 1;
         ce <= 1;
-        value <= 16'h5522;
+        value <= 16'h0;
     end
 
 
@@ -132,7 +133,7 @@ module read_sram_protocol #(
                 ce <= 1;
                 active <= 0;
                 ready <= 1;
-                if(finished_ctr < 4) begin // TODO adjust
+                if(finished_ctr < IDLE_TIME) begin // TODO adjust
                     signal_done <= 1;
                     finished_ctr <= finished_ctr + 1;
                 end

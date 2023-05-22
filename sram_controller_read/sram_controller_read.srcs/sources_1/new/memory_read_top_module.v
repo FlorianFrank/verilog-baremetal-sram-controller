@@ -11,12 +11,6 @@
 //% @author Florian Frank
 //% @copyright University of Passau - Chair of Computer Engineering
 module memory_read_top_module #(
-    //% @param Delay in clock cycles after each read operation.
-    parameter IDLE_DELAY=0/*1000000*/,
-    //% Delay in clock cycles after each read operation.
-    parameter READ_START_DELAY=5,
-    //% Size of the memory module in bytes
-    parameter MEM_SIZE=32767,
     //% Frequency of the clock driving the management module. (used for synchronization purposes)
     parameter FREQ_CLK1=100,
     //% Frequency of the clock driving the memory controller. (used for synchronization purposes)
@@ -24,11 +18,17 @@ module memory_read_top_module #(
     //% Data setup time defines how much time is waited until a read operation is executed.
     parameter integer ADDRESS_BUS_SIZE=32,
     parameter integer DATA_BUS_SIZE=16,
-    parameter integer CLOCK_CONFIG_WIDTH=16
+    parameter integer CLOCK_CONFIG_WIDTH=16,
+    //% Delay in clock cycles after each read operation.
+    parameter READ_START_DELAY=5,
+    //% @param Delay in clock cycles after each read operation.
+    parameter IDLE_DELAY=0
 )(
 
     //% Input clock which drives the memory controller.
-    input wire clk,
+    input wire clk1,
+    
+    input wire clk2,
 
     input wire start,
 
@@ -56,12 +56,6 @@ module memory_read_top_module #(
     //% Write enable signal
     output wire we,
 
-    //% Synchronization input signal from the management module which indicates that the module should wait or should start working.
-    input wire[1:0] sync_in,
-
-    //% Synchronization signal to indicate if the management should wait or should start working.
-    output reg[1:0] sync_out,
-
     output reg active,
 
     output reg ready
@@ -87,24 +81,13 @@ module memory_read_top_module #(
 
     //% Counter which counts the number of clock cycles to match the delay before starting to read specified by READ_START_DELAY.
     integer read_start_ctr;
-
-    //% @brief The task increments the state up to NOTIFY_MANAGEMENT_CONTROLLER and restarts with the first state IDLE.
-    task inc_state;
-        begin
-            if(state < `NOTIFY_MANAGEMENT_CONTROLLER)
-                state <= state + 3'h1;
-            else
-                state <= 3'h0;
-        end
-    endtask
-
+    
     //% @brief Initial block initializes all registers at startup.
     initial begin
         clkCtr <= 0;
         state <= `IDLE;
         alines_reg <= 0;
         read_start_ctr <= 0;
-        sync_out <= `AVAILABLE;
         address_tmp <= 0;
         teleh_tmp <= 0;
 
@@ -115,7 +98,7 @@ module memory_read_top_module #(
     reg start_triggered = 0;
 
     //% Always block executes the state machine.
-    always @(posedge clk)
+    always @(posedge clk1)
     begin
         case(state)
 
@@ -133,7 +116,7 @@ module memory_read_top_module #(
                     active <= 1;
                     clkCtr <= 0;
                     signal_start <= 0;
-                    inc_state();
+                        state <= `TRIGGER_READ_OPERATION;
                 end else active <= 0;
                 ready <= 0;
             end
@@ -144,7 +127,7 @@ module memory_read_top_module #(
                 start_triggered <= 0;
                 if(read_start_ctr > READ_START_DELAY)
                     begin
-                        inc_state();
+                        state <= `WAIT_FOR_READ_FINISHED;
                         read_start_ctr <= 0;
                     end
                 else
@@ -157,11 +140,11 @@ module memory_read_top_module #(
             // Wait for finished signal
             `WAIT_FOR_READ_FINISHED:
             begin
-                signal_start <= 0;
                 // Disable ethernet module
                 if (signal_done == 1) begin
-                    inc_state();
+                    state <= `NOTIFY_MANAGEMENT_CONTROLLER;
                     clkCtr <= 0;
+                    signal_start <= 0;
                 end
             end
 
@@ -170,7 +153,7 @@ module memory_read_top_module #(
             begin
                 signal_start <= 0;
                 if(signal_done == 0) begin
-                    inc_state();
+                    state <= `IDLE;
                     ready <= 1;
                     active <= 0;
                 end
@@ -178,16 +161,16 @@ module memory_read_top_module #(
         endcase
     end
 
-    //wire [2:0]debug_state;
 
     // Reading module of the micro controller
     read_sram_protocol #(
     .CLK_FREQUENCY(FREQ_CLK2),
     .ADDRESS_BUS_SIZE(ADDRESS_BUS_SIZE),
     .DATA_BUS_SIZE(DATA_BUS_SIZE),
-    .CLOCK_CONFIG_WIDTH(CLOCK_CONFIG_WIDTH))
+    .CLOCK_CONFIG_WIDTH(CLOCK_CONFIG_WIDTH), 
+    .IDLE_TIME(FREQ_CLK2/FREQ_CLK1))
     memorycontroller_read (
-        .clk(clk),
+        .clk(clk2),
         .teleh(teleh_tmp),
         .start(signal_start),
         .ce(ce),

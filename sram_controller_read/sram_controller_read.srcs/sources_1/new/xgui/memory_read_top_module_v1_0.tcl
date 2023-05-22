@@ -7,9 +7,11 @@ proc init_gui { IPINST } {
 Author: Florian Frank}
   ipgui::add_param $IPINST -name "FREQ_CLK1" -parent ${Page_0}
   ipgui::add_param $IPINST -name "FREQ_CLK2" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "IDLE_DELAY" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "MEM_SIZE" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "DATA_BUS_SIZE" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "ADDRESS_BUS_SIZE" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "CLOCK_CONFIG_WIDTH" -parent ${Page_0}
   ipgui::add_param $IPINST -name "READ_START_DELAY" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "IDLE_DELAY" -parent ${Page_0}
 
 
 }
@@ -68,15 +70,6 @@ proc validate_PARAM_VALUE.IDLE_DELAY { PARAM_VALUE.IDLE_DELAY } {
 	return true
 }
 
-proc update_PARAM_VALUE.MEM_SIZE { PARAM_VALUE.MEM_SIZE } {
-	# Procedure called to update MEM_SIZE when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.MEM_SIZE { PARAM_VALUE.MEM_SIZE } {
-	# Procedure called to validate MEM_SIZE
-	return true
-}
-
 proc update_PARAM_VALUE.READ_START_DELAY { PARAM_VALUE.READ_START_DELAY } {
 	# Procedure called to update READ_START_DELAY when any of the dependent parameters in the arguments change
 }
@@ -95,11 +88,6 @@ proc update_MODELPARAM_VALUE.IDLE_DELAY { MODELPARAM_VALUE.IDLE_DELAY PARAM_VALU
 proc update_MODELPARAM_VALUE.READ_START_DELAY { MODELPARAM_VALUE.READ_START_DELAY PARAM_VALUE.READ_START_DELAY } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.READ_START_DELAY}] ${MODELPARAM_VALUE.READ_START_DELAY}
-}
-
-proc update_MODELPARAM_VALUE.MEM_SIZE { MODELPARAM_VALUE.MEM_SIZE PARAM_VALUE.MEM_SIZE } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.MEM_SIZE}] ${MODELPARAM_VALUE.MEM_SIZE}
 }
 
 proc update_MODELPARAM_VALUE.FREQ_CLK1 { MODELPARAM_VALUE.FREQ_CLK1 PARAM_VALUE.FREQ_CLK1 } {
