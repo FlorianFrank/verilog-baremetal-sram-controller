@@ -32,13 +32,13 @@ The reading IP core can be added to your block design by adding **sram_controlle
 
 |Signal|Description|
 |----|-----|
-|clk| Input clock with clock frequency specified by Freq Clk2. (Must be alligned with the rising flanks of Clk1)|
+|clk1| Input clock with clock frequency specified by Freq Clk1. |
+|clk2| Input clock with clock frequency specified by Freq Clk2. (Must be alligned with the rising flanks of Clk1)|
 |start| When set to high for at least one clock cycle of Clk2. The module starts reading |
 |reset| Resets all wires. The state-machine changes back to the INIT state.|
 |dlines[DATA_WIDTH-1: 0]| Must be connected to the physical data lines of the FPGA. Adjustable by the parameter **Data Width.** |
 |address[ADDRESS_WIDTH-1:0]| Selected address to read from. Adjustable by the parameter **Address Bus Size.** |
 |teleh[CLOCK_CONFIG_SIZE-1:0]| Adjustment of the timing data setup time, like shown in Figure 1. Adjustable by the parameter **Clock Config Width.** |
-|sync_in| Should later be removed. Used for synchronization purposes. |
 
 ### 2.3 The IP-core has following output wires:
 
@@ -59,5 +59,14 @@ The reading IP core can be added to your block design by adding **sram_controlle
 This figure shows a sample block diagram how the custom clock module is connected to the IP-core. The signals alines, dlines, ce, oe and we must be connected to the GPIO pins of the board. 
 start, reset, active, ready and value must be connected to a custom module.s
 
-![reading ip core](documentation/figures/sample_read.png)
+![reading ip core](documentation/figures/sram_read_controller_ip_core.png)
 
+The following figure shows the simulation of the reading module with two subsequent read operations. Both are triggered by the start signal. Active indicates the time when the module is not in init state. One clock cycle of the ready signal means the data can be read reliable.  
+
+![reading ip core](documentation/figures/read_simulation.png)
+
+## 3. Writing IP core
+
+The reading IP core can be added to your block design by adding **sram_controller_write** to your IP-cores repository. 
+
+![reading ip core](documentation/figures/sram_read_controller_ip_core.png)
