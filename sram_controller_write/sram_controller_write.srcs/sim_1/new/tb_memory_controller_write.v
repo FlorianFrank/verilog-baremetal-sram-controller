@@ -50,6 +50,10 @@ module tb_memory_controller_write(
         #4
         start <= 0;
         #100
+        start <= 1;
+        #4
+        start <= 0;
+        #100
         $stop;
     end
 
@@ -57,8 +61,13 @@ module tb_memory_controller_write(
         forever #2 clk = ~clk;
     end
 
-    memory_write_top_module  #(
-    .INPUT_FREQUENCY(400)) memory_module_writer(.clk(clk), .start(start), .reset(reset), .value(value), .dlines(dlines), .address(address), .teleh(teleh),
+    memory_write_top_module  #(    
+    .FREQ_CLK1(100),
+    .FREQ_CLK2(400),
+    .ADDRESS_BUS_SIZE(32),
+    .DATA_BUS_SIZE(16),
+    .CLOCK_CONFIG_WIDTH(16))
+     memory_module_writer(.clk(clk), .start(start), .reset(reset), .value(value), .dlines(dlines), .address(address), .teleh(teleh),
         .alines(alines), .ce(ce), .oe(oe), .we(we), .active(active), .ready(ready));
 
     //% Input clock to trigger the always block executing the state machine.	

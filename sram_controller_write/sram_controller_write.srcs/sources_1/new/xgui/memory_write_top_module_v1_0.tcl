@@ -5,10 +5,11 @@ proc init_gui { IPINST } {
   set Page_0 [ipgui::add_page $IPINST -name "Page 0"]
   ipgui::add_static_text $IPINST -name "Description" -parent ${Page_0} -text {This module implements a bare metal SRAM controller to write data to external memory modules using GPIO pins. 
 Author: Florian Frank}
+  ipgui::add_param $IPINST -name "FREQ_CLK1" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "FREQ_CLK2" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "DATA_BUS_SIZE" -parent ${Page_0}
   ipgui::add_param $IPINST -name "ADDRESS_BUS_SIZE" -parent ${Page_0}
   ipgui::add_param $IPINST -name "CLOCK_CONFIG_WIDTH" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "DATA_BUS_SIZE" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "INPUT_FREQUENCY" -parent ${Page_0}
 
 
 }
@@ -40,20 +41,24 @@ proc validate_PARAM_VALUE.DATA_BUS_SIZE { PARAM_VALUE.DATA_BUS_SIZE } {
 	return true
 }
 
-proc update_PARAM_VALUE.INPUT_FREQUENCY { PARAM_VALUE.INPUT_FREQUENCY } {
-	# Procedure called to update INPUT_FREQUENCY when any of the dependent parameters in the arguments change
+proc update_PARAM_VALUE.FREQ_CLK1 { PARAM_VALUE.FREQ_CLK1 } {
+	# Procedure called to update FREQ_CLK1 when any of the dependent parameters in the arguments change
 }
 
-proc validate_PARAM_VALUE.INPUT_FREQUENCY { PARAM_VALUE.INPUT_FREQUENCY } {
-	# Procedure called to validate INPUT_FREQUENCY
+proc validate_PARAM_VALUE.FREQ_CLK1 { PARAM_VALUE.FREQ_CLK1 } {
+	# Procedure called to validate FREQ_CLK1
 	return true
 }
 
-
-proc update_MODELPARAM_VALUE.INPUT_FREQUENCY { MODELPARAM_VALUE.INPUT_FREQUENCY PARAM_VALUE.INPUT_FREQUENCY } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.INPUT_FREQUENCY}] ${MODELPARAM_VALUE.INPUT_FREQUENCY}
+proc update_PARAM_VALUE.FREQ_CLK2 { PARAM_VALUE.FREQ_CLK2 } {
+	# Procedure called to update FREQ_CLK2 when any of the dependent parameters in the arguments change
 }
+
+proc validate_PARAM_VALUE.FREQ_CLK2 { PARAM_VALUE.FREQ_CLK2 } {
+	# Procedure called to validate FREQ_CLK2
+	return true
+}
+
 
 proc update_MODELPARAM_VALUE.ADDRESS_BUS_SIZE { MODELPARAM_VALUE.ADDRESS_BUS_SIZE PARAM_VALUE.ADDRESS_BUS_SIZE } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
@@ -68,5 +73,15 @@ proc update_MODELPARAM_VALUE.DATA_BUS_SIZE { MODELPARAM_VALUE.DATA_BUS_SIZE PARA
 proc update_MODELPARAM_VALUE.CLOCK_CONFIG_WIDTH { MODELPARAM_VALUE.CLOCK_CONFIG_WIDTH PARAM_VALUE.CLOCK_CONFIG_WIDTH } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.CLOCK_CONFIG_WIDTH}] ${MODELPARAM_VALUE.CLOCK_CONFIG_WIDTH}
+}
+
+proc update_MODELPARAM_VALUE.FREQ_CLK1 { MODELPARAM_VALUE.FREQ_CLK1 PARAM_VALUE.FREQ_CLK1 } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.FREQ_CLK1}] ${MODELPARAM_VALUE.FREQ_CLK1}
+}
+
+proc update_MODELPARAM_VALUE.FREQ_CLK2 { MODELPARAM_VALUE.FREQ_CLK2 PARAM_VALUE.FREQ_CLK2 } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.FREQ_CLK2}] ${MODELPARAM_VALUE.FREQ_CLK2}
 }
 

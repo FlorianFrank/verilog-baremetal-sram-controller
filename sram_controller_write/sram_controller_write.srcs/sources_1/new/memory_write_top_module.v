@@ -7,7 +7,8 @@
 //% @author Florian Frank
 //% @copyright University of Passau - Chair of Computer Engineering
 module memory_write_top_module #(
-    parameter integer INPUT_FREQUENCY=100,
+    parameter integer FREQ_CLK1=100,
+    parameter integer FREQ_CLK2=400,
     parameter integer ADDRESS_BUS_SIZE=32,
     parameter integer DATA_BUS_SIZE=16,
     parameter integer CLOCK_CONFIG_WIDTH=16
@@ -45,7 +46,7 @@ module memory_write_top_module #(
 
 
     //% Calculates the length of the notification pulse to synchroize between FREQ_CLK1 of the management module and FREQ_CLK2 of the memory controller.
-    reg [CLOCK_CONFIG_WIDTH-1:0] STEP_SIZE_IN_NS = 1000000000/(INPUT_FREQUENCY *1e6) * 2;
+    reg [CLOCK_CONFIG_WIDTH-1:0] STEP_SIZE_IN_NS = 1000000000/(FREQ_CLK2 *1e6) * 2;
 
     reg [CLOCK_CONFIG_WIDTH-1:0] counter = 0;
     reg [3:0] state_reg;
@@ -59,15 +60,6 @@ module memory_write_top_module #(
     parameter FINISH        = 5;
     parameter MAX_NR_STATES = 6;
 
-    //% @brief The task increments the state up to NOTIFY_MANAGEMENT_CONTROLLER and restarts with the first state IDLE.
-    task inc_state;
-        begin
-            if(state_reg < MAX_NR_STATES)
-                state_reg <= state_reg + 3'h1;
-            else
-                state_reg <= 3'h0;
-        end
-    endtask
 
     function is_time_expired;
         input [CLOCK_CONFIG_WIDTH-1:0] time_to_wait;
@@ -91,6 +83,8 @@ module memory_write_top_module #(
     reg [DATA_BUS_SIZE-1:0] value_tmp;
     reg [ADDRESS_BUS_SIZE-1:0] address_tmp;
     reg [CLOCK_CONFIG_WIDTH-1:0] teleh_tmp;
+    
+    integer clk_sync_ctr = 0;
 
 
     //% Initial block initializes all values to the default values.
@@ -110,7 +104,10 @@ module memory_write_top_module #(
 
         counter    <= 0;
         state_reg  <= 0;
+        clk_sync_ctr <= 0;
     end
+    
+    
 
 
 
@@ -128,7 +125,7 @@ module memory_write_top_module #(
                     ce <= 1;
                     oe <= 1;
                     we <= 1;
-                    inc_state();
+                    state_reg <= SET_ADDRESS;
                     active <= 1;
                 end else active <= 0;
             end
@@ -136,36 +133,42 @@ module memory_write_top_module #(
             SET_ADDRESS: begin
                 alines <= address_tmp;
                 if(is_time_expired(0))
-                    inc_state();
-
+                    state_reg <= ACTIVATE_CE;
             end
 
             ACTIVATE_CE: begin
                 ce <= 0;
                 if(is_time_expired(0))
-                    inc_state();
+                    state_reg <= ACTIVATE_WE;
             end
 
             ACTIVATE_WE: begin
                 we <= 0;
                 if(is_time_expired(teleh_tmp))
-                    inc_state();
+                    state_reg <= SET_DATA;
             end
 
             SET_DATA: begin
                 dlines <= value_tmp;
                 if(is_time_expired(0))
-                    inc_state();
+                    state_reg <= FINISH;
             end
 
             FINISH: begin
                 ce <= 1;
                 we <= 1;
                 oe <= 1;
-                ready <= 1;
-                active <= 0;
-                if(is_time_expired(0))
-                    inc_state();
+
+
+                if(clk_sync_ctr < FREQ_CLK2/FREQ_CLK1) begin
+                    clk_sync_ctr <= clk_sync_ctr + 1;
+                    ready <= 1;
+                end else begin
+                     clk_sync_ctr <= 0;
+                     ready <= 0;
+                     active <= 0;
+                    state_reg <= INITIALIZE;
+                end
             end
         endcase
     end

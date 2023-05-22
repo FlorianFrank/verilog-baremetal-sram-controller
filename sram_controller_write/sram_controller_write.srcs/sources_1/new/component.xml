@@ -58,7 +58,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>9df151b9</spirit:value>
+            <spirit:value>44e5d12e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -74,7 +74,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>9df151b9</spirit:value>
+            <spirit:value>44e5d12e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -88,7 +88,21 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>1c833cc5</spirit:value>
+            <spirit:value>492408ea</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_testbench</spirit:name>
+        <spirit:displayName>Test Bench</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:simulation.testbench</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_testbench_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>3430f2b3</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -143,7 +157,7 @@
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
-              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:typeName>wire</spirit:typeName>
               <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
@@ -258,19 +272,6 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>written</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>reg</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
         <spirit:name>active</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
@@ -299,11 +300,6 @@
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
-        <spirit:name>INPUT_FREQUENCY</spirit:name>
-        <spirit:displayName>Input Frequency</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.INPUT_FREQUENCY">100</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>ADDRESS_BUS_SIZE</spirit:name>
         <spirit:displayName>Address Bus Size</spirit:displayName>
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.ADDRESS_BUS_SIZE">32</spirit:value>
@@ -318,6 +314,16 @@
         <spirit:displayName>Clock Config Width</spirit:displayName>
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.CLOCK_CONFIG_WIDTH">16</spirit:value>
       </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>FREQ_CLK1</spirit:name>
+        <spirit:displayName>Freq Clk1</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.FREQ_CLK1">100</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>FREQ_CLK2</spirit:name>
+        <spirit:displayName>Freq Clk2</spirit:displayName>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.FREQ_CLK2">400</spirit:value>
+      </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
   <spirit:fileSets>
@@ -326,7 +332,7 @@
       <spirit:file>
         <spirit:name>memory_write_top_module.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_9df151b9</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_44e5d12e</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -341,18 +347,23 @@
       <spirit:file>
         <spirit:name>xgui/memory_write_top_module_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_1c833cc5</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_492408ea</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_testbench_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>../../sim_1/new/tb_memory_controller_write.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
   <spirit:description>memory_write_top_module_v1_0</spirit:description>
   <spirit:parameters>
-    <spirit:parameter>
-      <spirit:name>INPUT_FREQUENCY</spirit:name>
-      <spirit:displayName>Input Frequency</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.INPUT_FREQUENCY">100</spirit:value>
-    </spirit:parameter>
     <spirit:parameter>
       <spirit:name>ADDRESS_BUS_SIZE</spirit:name>
       <spirit:displayName>Address Bus Size</spirit:displayName>
@@ -371,6 +382,16 @@
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
       <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">memory_write_top_module_v1_0</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>FREQ_CLK1</spirit:name>
+      <spirit:displayName>Freq Clk1</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.FREQ_CLK1">100</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>FREQ_CLK2</spirit:name>
+      <spirit:displayName>Freq Clk2</spirit:displayName>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.FREQ_CLK2">400</spirit:value>
     </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
@@ -407,16 +428,16 @@
       </xilinx:taxonomies>
       <xilinx:displayName>memory_write_top_module_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>4</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-05-10T19:52:48Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>5</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-05-22T13:37:52Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="1f0e2a3c"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="bb5ecf46"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="30be891b"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="fd08fce5"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="f170afb1"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="22209592"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="c446b49e"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="b07b1b65"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="55100394"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>
