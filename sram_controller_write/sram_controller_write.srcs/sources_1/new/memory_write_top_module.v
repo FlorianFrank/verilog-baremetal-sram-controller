@@ -9,8 +9,9 @@
 module memory_write_top_module #(
     parameter integer FREQ_CLK1=100,
     parameter integer FREQ_CLK2=400,
-    parameter integer ADDRESS_BUS_SIZE=32,
-    parameter integer DATA_BUS_SIZE=16,
+    parameter integer ADDRESS_BUS_SIZE=15,
+    parameter integer DATA_BUS_SIZE=64,
+    parameter integer DATA_BUS_SIZE_OUT=8,
     parameter integer CLOCK_CONFIG_WIDTH=16
 ) (
     //% Input clock to trigger the always block executing the state machine.	
@@ -22,13 +23,18 @@ module memory_write_top_module #(
 
     //% Input value which should be written to the memory module.
     input wire [DATA_BUS_SIZE-1:0] value,
+    
+    input wire mode,
+    
+    
+    input wire [DATA_BUS_SIZE_OUT-1:0] puf_value_in,
 
     input wire[ADDRESS_BUS_SIZE-1:0] address,
 
     input wire[CLOCK_CONFIG_WIDTH-1:0] teleh,
 
     //% Data lines to write the values to.
-    output reg[DATA_BUS_SIZE-1:0] dlines,
+    output reg[DATA_BUS_SIZE_OUT-1:0] dlines,
     //% Address lines to select the specific cell.
     output reg[ADDRESS_BUS_SIZE-1:0] alines,
     //% Chip enable signal which is set accordingly.
@@ -45,20 +51,24 @@ module memory_write_top_module #(
 );
 
 
+
+
     //% Calculates the length of the notification pulse to synchroize between FREQ_CLK1 of the management module and FREQ_CLK2 of the memory controller.
     reg [CLOCK_CONFIG_WIDTH-1:0] STEP_SIZE_IN_NS = 1000000000/(FREQ_CLK2 *1e6) * 2;
 
     reg [CLOCK_CONFIG_WIDTH-1:0] counter = 0;
     reg [3:0] state_reg;
+    reg[7:0] round_ctr = 0;
     
 
     parameter INITIALIZE    = 0;
-    parameter SET_ADDRESS 	= 1;
-    parameter ACTIVATE_CE   = 2;
-    parameter ACTIVATE_WE   = 3;
-    parameter SET_DATA 	    = 4;
-    parameter FINISH        = 5;
-    parameter MAX_NR_STATES = 6;
+    parameter NEXT_ROUND    = 1;
+    parameter SET_ADDRESS 	= 2;
+    parameter ACTIVATE_CE   = 3;
+    parameter ACTIVATE_WE   = 4;
+    parameter SET_DATA 	    = 5;
+    parameter FINISH        = 6;
+    parameter MAX_NR_STATES = 7;
 
 
     function is_time_expired;
@@ -81,10 +91,14 @@ module memory_write_top_module #(
 
 
     reg [DATA_BUS_SIZE-1:0] value_tmp;
+    reg [DATA_BUS_SIZE_OUT-1:0] out_value;
+    
+    
     reg [ADDRESS_BUS_SIZE-1:0] address_tmp;
     reg [CLOCK_CONFIG_WIDTH-1:0] teleh_tmp;
     
-    integer clk_sync_ctr = 0;
+    reg[7:0] clk_sync_ctr = 0;
+    reg[7:0] clock_buff_ctr = 0;
 
 
     //% Initial block initializes all values to the default values.
@@ -119,18 +133,32 @@ module memory_write_top_module #(
                 ready <= 0;
                 if(start == 1) begin
                     value_tmp <= value;
+                    out_value <= puf_value_in;
                     address_tmp <= address;
                     teleh_tmp <= teleh;
 
                     ce <= 1;
                     oe <= 1;
                     we <= 1;
-                    state_reg <= SET_ADDRESS;
+                    if(mode == 0) // Simple forward mode
+                        state_reg <= NEXT_ROUND;
+                    else    // PUF MODE 
+                        state_reg <= SET_ADDRESS;
                     active <= 1;
+                    clock_buff_ctr <= 0;
                 end else active <= 0;
+            end
+            
+            NEXT_ROUND: begin
+                ce <= 1;
+                we <= 1;
+                oe <= 1;
+                out_value <= value_tmp[clock_buff_ctr*DATA_BUS_SIZE_OUT+:DATA_BUS_SIZE_OUT];
+                address_tmp <= address_tmp + 1;
             end
 
             SET_ADDRESS: begin
+                clock_buff_ctr <= clock_buff_ctr + 1; 
                 alines <= address_tmp;
                 if(is_time_expired(0))
                     state_reg <= ACTIVATE_CE;
@@ -149,9 +177,13 @@ module memory_write_top_module #(
             end
 
             SET_DATA: begin
-                dlines <= value_tmp;
-                if(is_time_expired(0))
+                dlines <= out_value;
+                if(is_time_expired(0)) begin
+                 if(mode == 0 && clock_buff_ctr < DATA_BUS_SIZE/DATA_BUS_SIZE_OUT)
+                    state_reg <= NEXT_ROUND;
+                 else 
                     state_reg <= FINISH;
+                end
             end
 
             FINISH: begin
