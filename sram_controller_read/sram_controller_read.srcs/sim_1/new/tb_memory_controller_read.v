@@ -61,11 +61,11 @@ module tb_memory_controller_read(
     end
 
     initial begin
-        forever #2 clk1 = ~clk1;
+        forever #8 clk1 = ~clk1;
     end
 
     initial begin
-        forever #8 clk2 = ~clk2;
+        forever #2 clk2 = ~clk2;
     end    
        
     
@@ -80,9 +80,9 @@ module tb_memory_controller_read(
         .SEPERATE_OE_CE(0),
         
         .TSETUP(1),
-        .TAS(1),
+        .TAS(0),
         .TOECE(1),
-        .TPRC(2),
+        .TPRC(20),
         .TNEXT(1))  
     memory_module_writer(.clk1(clk1), .clk2(clk2), .start(start), .reset(reset), .value(value), .dlines(dlines), .address(address),
                            .alines(alines), .ce(ce), .oe(oe), .we(we), .active(active), .ready(ready));

@@ -62,8 +62,6 @@ module read_sram_protocol #(
 
     integer counter;
 
-    assign state3 = state;
-
     initial begin
         state <= `STATE_IDLE;
         timing_ctr <= WAIT_TIME;

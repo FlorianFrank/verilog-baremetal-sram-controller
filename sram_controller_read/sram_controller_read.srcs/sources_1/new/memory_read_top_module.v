@@ -166,7 +166,7 @@ module memory_read_top_module #(
             begin
                 // Disable ethernet module
                 if (signal_done == 1) begin
-                    if(read_ctr > DATA_BUS_SIZE/DATA_BUS_SIZE_OUT)
+                    if(read_ctr + 1 >= DATA_BUS_SIZE/DATA_BUS_SIZE_OUT)
                         state <= `NOTIFY_MANAGEMENT_CONTROLLER;
                     else
                         begin
