@@ -45,9 +45,7 @@ module read_sram_protocol #(
 
     output reg active,
 
-    output reg ready,
-    
-    output wire[3:0] state3
+    output reg ready
 );
 
 

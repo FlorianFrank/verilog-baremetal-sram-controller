@@ -144,7 +144,7 @@ module memory_read_top_module #(
                         state <= `TRIGGER_READ_OPERATION;
                 end else active <= 0;
                 ready <= 0;
-                read_ctr <= 1;
+                read_ctr <= 0;
             end
             
             `NEXT_READ: begin
